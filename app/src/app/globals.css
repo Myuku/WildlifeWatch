@@ -1,3 +1,65 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.footer-container {
+    background-color: #FCFBF6; /* Matching the background */
+    padding: 20px 10px;
+    border-top: 1px solid #ddd;
+    color: black;
+  }
+  
+  
+  .footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    opacity: 0.8; /* Slight opacity for a lighter appearance */
+  }
+  
+  .footer-left {
+    max-width: 200px;
+  }
+  
+  .site-name {
+    font-size: 18px; /* Smaller font size */
+    font-weight: bold;
+    margin-bottom: 10px; /* Smaller margin */
+  }
+  
+  .social-icons {
+    display: flex;
+    gap: 8px; /* Reduced gap between icons */
+  }
+  
+  .footer-right {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px; /* Reduced gap between topics */
+  }
+  
+  .footer-topic {
+    min-width: 120px; /* Reduced width for smaller layout */
+  }
+  
+  .footer-topic h3 {
+    font-size: 14px; /* Smaller font for topics */
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+  
+  .footer-topic ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .footer-topic ul li {
+    margin-bottom: 6px; /* Smaller gap between page links */
+    font-size: 12px; /* Smaller font size for links */
+  }
+  
+  .bg-custom-color {
+    background-color: #FCFBF6;
+  }
+  
