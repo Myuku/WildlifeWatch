@@ -5,7 +5,7 @@ import './globals.css';
 const exo = Exo_2({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Deploy with Defang",
+  title: "Wild Life Watch",
   description: "Deploy your Next.js app with Defang.",
 };
 
