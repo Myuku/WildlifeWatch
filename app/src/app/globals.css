@@ -3,63 +3,41 @@
 @tailwind utilities;
 
 .footer-container {
-    background-color: #FCFBF6; /* Matching the background */
-    padding: 20px 10px;
-    border-top: 1px solid #ddd;
-    color: black;
+    @apply bg-[#FCFBF6] border-t border-gray-300 py-5 px-3 text-black;
   }
   
-  
   .footer-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    opacity: 0.8; /* Slight opacity for a lighter appearance */
+    @apply flex justify-center items-start opacity-80; /* Center the content */
+    gap: 800px; /* Adjust gap as needed to control space between left and right */
   }
   
   .footer-left {
-    max-width: 200px;
+    @apply max-w-xs text-left; /* Left-align the text */
   }
   
   .site-name {
-    font-size: 18px; /* Smaller font size */
-    font-weight: bold;
-    margin-bottom: 10px; /* Smaller margin */
+    @apply text-lg font-bold mb-2;
   }
   
   .social-icons {
-    display: flex;
-    gap: 8px; /* Reduced gap between icons */
+    @apply flex gap-2; /* Space between social icons */
   }
   
   .footer-right {
-    display: flex;
-    justify-content: space-between;
-    gap: 30px; /* Reduced gap between topics */
+    @apply flex justify-between gap-28; /* Further increased gap between topics */
   }
   
-  .footer-topic {
-    min-width: 120px; /* Reduced width for smaller layout */
-  }
+  
   
   .footer-topic h3 {
-    font-size: 14px; /* Smaller font for topics */
-    font-weight: bold;
-    margin-bottom: 8px;
+    @apply text-sm font-bold mb-2;
   }
   
   .footer-topic ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+    @apply list-none p-0 m-0;
   }
   
   .footer-topic ul li {
-    margin-bottom: 6px; /* Smaller gap between page links */
-    font-size: 12px; /* Smaller font size for links */
-  }
-  
-  .bg-custom-color {
-    background-color: #FCFBF6;
+    @apply text-xs mb-1; /* Adjust size of the links */
   }
   
