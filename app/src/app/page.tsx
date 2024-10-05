@@ -1,11 +1,14 @@
 import Image from "next/image";
 import Message from "./test";
+import Footer from './footer';
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen min-w-screen flex-col items-center justify-center bg-gradient-defang">
-      <h1 className="text-4xl font-bold text-white">Next.js &times; Defang</h1>
-      <div className="text-9xl font-bold"><Message /></div>
-    </main>
+    <div className="flex flex-col min-h-screen min-w-screen" style={{ backgroundColor: "#FCFBF6" }}>
+      <main className="flex-grow flex flex-col items-center justify-center">
+        <h1 className="text-4xl font-bold text-black">Next.js &times; Defang</h1>
+      </main>
+      <Footer />
+    </div>
   );
 }
