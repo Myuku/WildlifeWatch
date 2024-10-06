@@ -11,6 +11,7 @@ import {
   HiCamera,
   HiFolder,
   HiInformationCircle,
+  HiExclamationCircle,
   HiX,
 } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
@@ -71,9 +72,10 @@ export default function HomePage() {
     return Math.round(num * 10000) / 10000;
   };
 
+  const [waiting, setWaiting] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [file, setFile] = useState<File | null>(null);
-  const [result, setResult] = useState<JSON | null>(null);
+  const [analysisResult, setAnalysisResult] = useState<string | null>(null);
   const fileInput = useRef<HTMLInputElement | null>(null);
 
   // Turns the NIY Toast off after 2 seconds
@@ -87,20 +89,26 @@ export default function HomePage() {
 
   const handleAnalysis = async (event) => {
     event.preventDefault();
+    setWaiting(true);
     const formData = new FormData();
     formData.append("image", file!);
     formData.append(
       "location",
       JSON.stringify({ lat: currentLocation.lat, lng: currentLocation.lng })
     );
-
+    let url = "http://localhost:3000";
     try {
-      const response = await fetch("/image-analysis", {
+      const response = await fetch(url + "/image-analysis", {
         method: "POST",
         body: formData,
-      });
-      setResult(await response.json());
-      console.log(result);
+      })
+        .then((response) => response.json())
+        .then((json) => {
+          navigate("/response", {
+            state: { image: file, result: json },
+          });
+        });
+      console.log(analysisResult);
     } catch (error) {
       console.error("Error uploading image:", error);
     }
@@ -177,23 +185,20 @@ export default function HomePage() {
               <div className="flex flex-col items-end justify-start">
                 <Button
                   disabled={isVisible}
+                  isProcessing={waiting}
                   color="green"
-                  className="items-end"
-                  onClick={() => {
-                    handleAnalysis;
-                    navigate("/response", {
-                      state: { image: file, result: result },
-                    });
-                  }}
+                  className="items-end mr-4"
+                  onClick={handleAnalysis}
                 >
                   Continue
                 </Button>
               </div>
-              {isVisible ? null : (
-                <p className="text-red-400">
-                  Please note that it may take a while to load...
-                </p>
-              )}
+              {waiting ? (
+                <div className="flex flex-row text-red-400">
+                  <HiExclamationCircle className="mr-2" /> Please wait a
+                  moment...{" "}
+                </div>
+              ) : null}
             </Modal.Footer>
           </Modal.Body>
         </Modal>

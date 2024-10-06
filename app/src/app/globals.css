@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+nextjs-portal {
+  display: none;
+}
 .footer-container {
   @apply bg-[#FCFBF6] border-t border-gray-300 py-5 px-3 text-black;
 }
@@ -38,4 +41,3 @@
 .footer-topic ul li {
   @apply text-xs mb-1; /* Adjust size of the links */
 }
-
