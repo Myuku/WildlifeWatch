@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Modal, Alert } from "flowbite-react";
+import { Button, Modal, Alert, ModalFooter } from "flowbite-react";
 import React, { useState, useRef } from "react";
 
 import Image from "next/image";
@@ -96,44 +96,48 @@ export default function Home() {
           <Modal.Header>Upload Image</Modal.Header>
           <Modal.Body>
             <div className="space-y-6 flex-grow flex flex-col items-center justify-center">
-              <input
-                type="file"
-                name="image"
-                ref={fileInput}
-                onChange={(e) => {
-                  setFile(e.target.files[0]);
-                  setIsVisible(false);
-                }}
-                style={{ display: "none" }}
-              />
-              <Button
-                className="upload-btn"
-                onClick={() => {
-                  fileInput.current.click();
-                }}
-              >
-                <HiFolder className="mr-2 h-5 w-5" />
-                Choose File
-                <HiOutlineArrowRight className="ml-2 h-5 w-5" />
-              </Button>
+              <div className="flex flex-row items-center justify-around gap-x-4">
+                <input
+                  type="file"
+                  name="image"
+                  ref={fileInput}
+                  onChange={(e) => {
+                    setFile(e.target.files[0]);
+                    setIsVisible(false);
+                  }}
+                  style={{ display: "none" }}
+                />
+                <Button
+                  className="upload-btn"
+                  onClick={() => {
+                    fileInput.current.click();
+                  }}
+                >
+                  <HiFolder className="mr-2 h-5 w-5" />
+                  Choose File
+                  <HiOutlineArrowRight className="ml-2 h-5 w-5" />
+                </Button>
 
-              <Button>
-                <HiCamera className="mr-2 h-5 w-5" />
-                Take Photo
-                <HiOutlineArrowRight className="ml-2 h-5 w-5" />
-              </Button>
+                <Button>
+                  <HiCamera className="mr-2 h-5 w-5" />
+                  Take Photo
+                  <HiOutlineArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </div>
 
               {isVisible ? <NoImageAlert /> : <ShowImage file={file} />}
             </div>
-            <div className="flex flex-col items-end justify-start">
-              <Button
-                color="red"
-                className="items-end"
-                onClick={() => setOpenModal(false)}
-              >
-                Close
-              </Button>
-            </div>
+            <Modal.Footer className="mt-6">
+              <div className="flex flex-col items-end justify-start">
+                <Button
+                  color="green"
+                  className="items-end"
+                  onClick={() => setOpenModal(false)}
+                >
+                  Continue
+                </Button>
+              </div>
+            </Modal.Footer>
           </Modal.Body>
         </Modal>
       </header>
