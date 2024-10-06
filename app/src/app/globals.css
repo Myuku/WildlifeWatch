@@ -3,41 +3,39 @@
 @tailwind utilities;
 
 .footer-container {
-    @apply bg-[#FCFBF6] border-t border-gray-300 py-5 px-3 text-black;
-  }
-  
-  .footer-content {
-    @apply flex justify-center items-start opacity-80; /* Center the content */
-    gap: 800px; /* Adjust gap as needed to control space between left and right */
-  }
-  
-  .footer-left {
-    @apply max-w-xs text-left; /* Left-align the text */
-  }
-  
-  .site-name {
-    @apply text-lg font-bold mb-2;
-  }
-  
-  .social-icons {
-    @apply flex gap-2; /* Space between social icons */
-  }
-  
-  .footer-right {
-    @apply flex justify-between gap-28; /* Further increased gap between topics */
-  }
-  
-  
-  
-  .footer-topic h3 {
-    @apply text-sm font-bold mb-2;
-  }
-  
-  .footer-topic ul {
-    @apply list-none p-0 m-0;
-  }
-  
-  .footer-topic ul li {
-    @apply text-xs mb-1; /* Adjust size of the links */
-  }
-  
+  @apply bg-[#FCFBF6] border-t border-gray-300 py-5 px-3 text-black;
+}
+
+.footer-content {
+  @apply flex justify-center items-start opacity-80; /* Center the content */
+  gap: 800px; /* Adjust gap as needed to control space between left and right */
+}
+
+.footer-left {
+  @apply max-w-xs text-left; /* Left-align the text */
+}
+
+.site-name {
+  @apply text-lg font-bold mb-2;
+}
+
+.social-icons {
+  @apply flex gap-2; /* Space between social icons */
+}
+
+.footer-right {
+  @apply flex justify-between gap-28; /* Further increased gap between topics */
+}
+
+.footer-topic h3 {
+  @apply text-sm font-bold mb-2;
+}
+
+.footer-topic ul {
+  @apply list-none p-0 m-0;
+}
+
+.footer-topic ul li {
+  @apply text-xs mb-1; /* Adjust size of the links */
+}
+

@@ -161,7 +161,7 @@ const server = http.createServer(async (req, res) => {
 
             if (animalLabel !== 'Error identifying animal label.') {
                 // Ask GPT for more details
-                const animalDetails = await getTraits(animalLabel);
+                const animalDetails = await getTraits(animalLabel, null, null);
                 res.end(`Animal label identified: ${animalLabel}\n\nInteresting facts or details:\n${animalDetails}\n`);
             } else {
                 res.end(`Animal label could not be identified.\n`);
