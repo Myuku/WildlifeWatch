@@ -4,8 +4,8 @@ import { Button, Modal, Alert, Toast } from "flowbite-react";
 import React, { useState, useRef, useEffect } from "react";
 
 import Image from "next/image";
-import Footer from "./footer";
-import MapComponent from "./MapComponent";
+import Footer from "../footer";
+import MapComponent from "../MapComponent";
 import {
   HiOutlineArrowRight,
   HiCamera,
@@ -46,7 +46,12 @@ function ShowImage({ file }) {
     <img
       src={imageUrl}
       alt="Uploaded Image"
-      style={{ width: "30vw", height: "30vw", objectFit: "cover" }}
+      style={{
+        width: "30vw",
+        height: "30vw",
+        objectFit: "cover",
+        borderRadius: "10%",
+      }}
     />
   );
 }
@@ -67,21 +72,11 @@ export default function HomePage() {
   };
 
   const [isVisible, setIsVisible] = useState(true);
-  const [file, setFile] = useState(null);
-  const fileInput = useRef(null);
+  const [file, setFile] = useState<File | null>(null);
+  const [result, setResult] = useState<JSON | null>(null);
+  const fileInput = useRef<HTMLInputElement | null>(null);
 
-  const ImageInput = ({ setFile }) => {
-    const onChange = async (e) => {
-      if (e.target.files && e.target.files.length > 0) {
-        setFile(e.target.files[0]);
-      }
-    };
-    return <input type="file" name="image" onChange={onChange} />;
-  };
-
-  {
-    /* Turns the NIY Toast off after 2 seconds */
-  }
+  // Turns the NIY Toast off after 2 seconds
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowNIY(false);
@@ -90,13 +85,34 @@ export default function HomePage() {
 
   const navigate = useNavigate();
 
+  const handleAnalysis = async (event) => {
+    event.preventDefault();
+    const formData = new FormData();
+    formData.append("image", file);
+    formData.append(
+      "location",
+      JSON.stringify({ lat: currentLocation.lat, lng: currentLocation.lng })
+    );
+
+    try {
+      const response = await fetch("/image-analysis", {
+        method: "POST",
+        body: formData,
+      });
+      setResult(await response.json());
+      console.log(result);
+    } catch (error) {
+      console.error("Error uploading image:", error);
+    }
+  };
+
   return (
     <div
       className="flex flex-col min-h-screen"
       style={{ backgroundColor: "#FCFBF6" }}
     >
       {/* Header Section */}
-      <header className="flex flex-col items-center py-6">
+      <div className="flex flex-col items-center py-6">
         <Image
           src="/logo.jpeg"
           alt="Wildlife Watch Logo"
@@ -131,7 +147,7 @@ export default function HomePage() {
                   name="image"
                   ref={fileInput}
                   onChange={(e) => {
-                    setFile(e.target.files[0]);
+                    setFile(e.target.files![0]);
                     setIsVisible(false);
                   }}
                   style={{ display: "none" }}
@@ -139,7 +155,7 @@ export default function HomePage() {
                 <Button
                   className="upload-btn"
                   onClick={() => {
-                    fileInput.current.click();
+                    fileInput.current!.click();
                   }}
                 >
                   <HiFolder className="mr-2 h-5 w-5" />
@@ -164,7 +180,10 @@ export default function HomePage() {
                   color="green"
                   className="items-end"
                   onClick={() => {
-                    navigate("/response");
+                    handleAnalysis;
+                    navigate("/response", {
+                      state: { image: file, result: result },
+                    });
                   }}
                 >
                   Continue
@@ -173,7 +192,7 @@ export default function HomePage() {
             </Modal.Footer>
           </Modal.Body>
         </Modal>
-      </header>
+      </div>
 
       {/* Main Section - Larger Map */}
       <main className="flex-grow flex justify-center items-center">
