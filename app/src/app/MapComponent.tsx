@@ -16,7 +16,12 @@ const mapContainerStyle = {
   marginBottom: '20px',
 };
 
-export default function MapComponent() {
+// Define props type for passing location change handler
+interface MapComponentProps {
+  onLocationChange: (lat: number, lng: number) => void;
+}
+
+export default function MapComponent({ onLocationChange }: MapComponentProps) {
   const [location, setLocation] = useState({ lat: 0, lng: 0 });
   const [address, setAddress] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -31,6 +36,7 @@ export default function MapComponent() {
           const { latitude, longitude } = position.coords;
           setLocation({ lat: latitude, lng: longitude });
           getGeocodedAddress(latitude, longitude); // Call the function to get the address
+          onLocationChange(latitude, longitude); // Update parent component with the new location
         },
         (error) => {
           setErrorMessage('Unable to retrieve your location');
@@ -74,12 +80,17 @@ export default function MapComponent() {
     setLocation(newLocation); // Set the new location
     getGeocodedAddress(newLocation.lat, newLocation.lng); // Get the address of the new location
     setIsModalOpen(false); // Close the modal
+    onLocationChange(newLocation.lat, newLocation.lng); // Update parent component with the new location
   };
 
   // Cancel the location change
   const cancelLocationChange = () => {
     setIsModalOpen(false); // Close the modal without changing the location
   };
+
+  useEffect(() => {
+    handleGetCurrentLocation(); // Automatically get the user's current location when the component loads
+  }, []);
 
   return (
     <div className="flex flex-col items-center mt-10 w-full">

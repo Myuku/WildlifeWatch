@@ -7,8 +7,19 @@ import Footer from "./footer";
 import React from "react";
 import MapComponent from "./MapComponent";
 
-export default function Home() {
+export default function Page() {
   const [openModal, setOpenModal] = useState(false);
+  const [currentLocation, setCurrentLocation] = useState({ lat: 0, lng: 0 });
+
+  // Handler to update the current location from MapComponent
+  const handleLocationChange = (lat: number, lng: number) => {
+    setCurrentLocation({ lat, lng });
+  };
+
+  // Function to round to 4 decimal places
+  const roundToFour = (num: number) => {
+    return Math.round(num * 10000) / 10000;
+  };
 
   return (
     <div className="flex flex-col min-h-screen" style={{ backgroundColor: "#FCFBF6" }}>
@@ -31,6 +42,11 @@ export default function Home() {
             UPLOAD IMAGE
           </span>
         </button>
+
+        {/* Line with current location */}
+        <p className="text-gray-600 mt-4 text-sm">
+          You are at: Latitude {roundToFour(currentLocation.lat)}, Longitude {roundToFour(currentLocation.lng)}
+        </p>
 
         {/* Modal for Terms of Service */}
         <Modal show={openModal} onClose={() => setOpenModal(false)}>
@@ -64,7 +80,7 @@ export default function Home() {
       <main className="flex-grow flex justify-center items-center">
         {/* Larger map container */}
         <div className="w-full max-w-6xl p-6">
-          <MapComponent />
+          <MapComponent onLocationChange={handleLocationChange} />
         </div>
       </main>
 
