@@ -28,7 +28,7 @@ function CalcThreatLevel() {
 }
 
 export default function ResponsePage() {
-  const { state: { image } = {} } = useLocation();
+  const { state: { image, result } = {} } = useLocation();
   const imageUrl = URL.createObjectURL(image);
 
   return (
@@ -85,7 +85,7 @@ export default function ResponsePage() {
           className="h-full w-full rounded-md flex flex-col justify-around p-4"
           style={{ backgroundColor: "#ffffff" }}
         >
-          Oop
+          Oop {result}
         </div>
       </div>
       <Footer />

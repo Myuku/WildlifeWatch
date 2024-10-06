@@ -73,11 +73,10 @@ export default function HomePage() {
 
   const [isVisible, setIsVisible] = useState(true);
   const [file, setFile] = useState<File | null>(null);
+  const [result, setResult] = useState<JSON | null>(null);
   const fileInput = useRef<HTMLInputElement | null>(null);
 
-  {
-    /* Turns the NIY Toast off after 2 seconds */
-  }
+  // Turns the NIY Toast off after 2 seconds
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowNIY(false);
@@ -85,6 +84,27 @@ export default function HomePage() {
   }, [showNIY]);
 
   const navigate = useNavigate();
+
+  const handleAnalysis = async (event) => {
+    event.preventDefault();
+    const formData = new FormData();
+    formData.append("image", file);
+    formData.append(
+      "location",
+      JSON.stringify({ lat: currentLocation.lat, lng: currentLocation.lng })
+    );
+
+    try {
+      const response = await fetch("/image-analysis", {
+        method: "POST",
+        body: formData,
+      });
+      setResult(await response.json());
+      console.log(result);
+    } catch (error) {
+      console.error("Error uploading image:", error);
+    }
+  };
 
   return (
     <div
@@ -160,8 +180,9 @@ export default function HomePage() {
                   color="green"
                   className="items-end"
                   onClick={() => {
+                    handleAnalysis;
                     navigate("/response", {
-                      state: { image: file },
+                      state: { image: file, result: result },
                     });
                   }}
                 >
