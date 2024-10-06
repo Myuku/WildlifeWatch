@@ -4,8 +4,8 @@ import { Button, Modal, Alert, Toast } from "flowbite-react";
 import React, { useState, useRef, useEffect } from "react";
 
 import Image from "next/image";
-import Footer from "./footer";
-import MapComponent from "./MapComponent";
+import Footer from "../footer";
+import MapComponent from "../MapComponent";
 import {
   HiOutlineArrowRight,
   HiCamera,
