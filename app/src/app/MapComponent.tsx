@@ -32,46 +32,46 @@ export default function MapComponent({ onLocationChange }: MapComponentProps) {
   const [locationData, setLocationData] = useState<null | Array<{ id: string; lat: number; lng: number; animal_name: string }>>(null);
   const [selectedMarker, setSelectedMarker] = useState<null | { lat: number; lng: number; animal_name: string; address: string }>(null);
 
-  const handleRetrieve = async (event: React.MouseEvent) => {
-    event.preventDefault();
-    try {
-      const response = await fetch("http://localhost:5432/image-analysis", {
-        method: "GET",
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          setAllData(data);
-        });
-    } catch (error) {
-      console.error("Error getting data", error);
-    }
-  };
+  // const handleRetrieve = async (event: React.MouseEvent) => {
+  //   event.preventDefault();
+  //   try {
+  //     const response = await fetch("http://localhost:5432/image-analysis", {
+  //       method: "GET",
+  //     })
+  //       .then((response) => response.json())
+  //       .then((data) => {
+  //         setAllData(data);
+  //       });
+  //   } catch (error) {
+  //     console.error("Error getting data", error);
+  //   }
+  // };
 
 // New function to retrieve and display only id, longitude, latitude, and animal name
-const handleRetrieveLocationData = async (event: React.MouseEvent) => {
-  event.preventDefault();
-  try {
-    const response = await fetch("http://localhost:5432/image-analysis", {
-      method: "GET",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        // Parse the 'location' string and extract lat/lng
-        const extractedData = data.map((item: any) => {
-          const location = JSON.parse(item.location); // Parse the location string
-          return {
-            id: item.id,
-            lat: location.lat, // Extract the lat
-            lng: location.lng, // Extract the lng
-            animal_name: item.animal_type, // Animal name
-          };
-        });
-        setLocationData(extractedData);
-      });
-  } catch (error) {
-    console.error("Error getting location data", error);
-  }
-};
+// const handleRetrieveLocationData = async (event: React.MouseEvent) => {
+//   event.preventDefault();
+//   try {
+//     const response = await fetch("http://localhost:5432/image-analysis", {
+//       method: "GET",
+//     })
+//       .then((response) => response.json())
+//       .then((data) => {
+//         // Parse the 'location' string and extract lat/lng
+//         const extractedData = data.map((item: any) => {
+//           const location = JSON.parse(item.location); // Parse the location string
+//           return {
+//             id: item.id,
+//             lat: location.lat, // Extract the lat
+//             lng: location.lng, // Extract the lng
+//             animal_name: item.animal_type, // Animal name
+//           };
+//         });
+//         setLocationData(extractedData);
+//       });
+//   } catch (error) {
+//     console.error("Error getting location data", error);
+//   }
+// };
 
   const handleGetCurrentLocation = () => {
     if (navigator.geolocation) {
@@ -226,26 +226,26 @@ const handleRetrieveLocationData = async (event: React.MouseEvent) => {
             </span>
           </button>
 
-          <button
+          {/* <button
             onClick={handleRetrieve}
             className="relative inline-flex items-center justify-center p-0.5 mb-6 mt-4 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-blue-300 to-purple-300 group-hover:from-blue-300 group-hover:to-purple-300 dark:text-white dark:hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-purple-200 dark:focus:ring-purple-800"
           >
             <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
               Retrieve Sightings Data
             </span>
-          </button>
+          </button> */}
 
           {/* New button to retrieve and display only id, lat, lng */}
-          <button
+          {/* <button
             onClick={handleRetrieveLocationData}
             className="relative inline-flex items-center justify-center p-0.5 mb-6 mt-4 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-pink-300 to-orange-300 group-hover:from-pink-300 group-hover:to-orange-300 dark:text-white dark:hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-orange-200 dark:focus:ring-orange-800"
           >
             <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
               Retrieve Location Data
             </span>
-          </button>
+          </button> */}
 
-          {locationData && (
+          {/* {locationData && (
             <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md">
               <h3 className="text-xl font-bold mb-4">Location Data (ID, Latitude, Longitude, Animal Name)</h3>
               <pre className="whitespace-pre-wrap text-sm text-gray-700">
@@ -261,7 +261,7 @@ const handleRetrieveLocationData = async (event: React.MouseEvent) => {
                 {JSON.stringify(allData, null, 2)}
               </pre>
             </div>
-          )}
+          )} */}
         </>
       )}
     </div>
