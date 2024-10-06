@@ -1,7 +1,7 @@
 "use client";
 
-import { Button, Modal, Alert } from "flowbite-react";
-import React, { useState, useRef } from "react";
+import { Button, Modal, Alert, Toast } from "flowbite-react";
+import React, { useState, useRef, useEffect } from "react";
 
 import Image from "next/image";
 import Footer from "./footer";
@@ -11,6 +11,7 @@ import {
   HiCamera,
   HiFolder,
   HiInformationCircle,
+  HiX,
 } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
 
@@ -19,6 +20,22 @@ function NoImageAlert() {
     <Alert color="failure" icon={HiInformationCircle}>
       <span className="font-medium">No Image Selected</span>
     </Alert>
+  );
+}
+
+function NotImplemented() {
+  return (
+    <div className="flex flex-col gap-4">
+      <Toast>
+        <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-500 dark:bg-red-800 dark:text-red200">
+          <HiX className="h-5 w-5" />
+        </div>
+        <div className="ml-3 text-sm font-normal">
+          Sorry! This Feature is coming soon!
+        </div>
+        <Toast.Toggle />
+      </Toast>
+    </div>
   );
 }
 
@@ -36,6 +53,7 @@ function ShowImage({ file }) {
 
 export default function HomePage() {
   const [openModal, setOpenModal] = useState(false);
+  const [showNIY, setShowNIY] = useState(false);
   const [currentLocation, setCurrentLocation] = useState({ lat: 0, lng: 0 });
 
   // Handler to update the current location from MapComponent
@@ -60,6 +78,15 @@ export default function HomePage() {
     };
     return <input type="file" name="image" onChange={onChange} />;
   };
+
+  {
+    /* Turns the NIY Toast off after 2 seconds */
+  }
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowNIY(false);
+    }, 2000);
+  }, [showNIY]);
 
   const navigate = useNavigate();
 
@@ -120,13 +147,14 @@ export default function HomePage() {
                   <HiOutlineArrowRight className="ml-2 h-5 w-5" />
                 </Button>
 
-                <Button>
+                <Button onClick={() => setShowNIY((state) => !state)}>
                   <HiCamera className="mr-2 h-5 w-5" />
                   Take Photo
                   <HiOutlineArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </div>
 
+              {showNIY && NotImplemented()}
               {isVisible ? <NoImageAlert /> : <ShowImage file={file} />}
             </div>
             <Modal.Footer className="mt-6">
