@@ -1,15 +1,54 @@
 "use client";
 
-import { Button, Modal } from "flowbite-react";
-import { useState } from "react";
+import { Button, Modal, Alert } from "flowbite-react";
+import React, { useState, useRef } from "react";
 
 import Image from "next/image";
 import Footer from "./footer";
-import React from "react";
 import MapComponent from "./MapComponent";
+import {
+  HiOutlineArrowRight,
+  HiCamera,
+  HiFolder,
+  HiInformationCircle,
+} from "react-icons/hi";
+import { auto } from "openai/_shims/registry.mjs";
+
+function NoImageAlert() {
+  return (
+    <Alert color="failure" icon={HiInformationCircle}>
+      <span className="font-medium">No Image Selected</span>
+    </Alert>
+  );
+}
+
+function ShowImage({ file }) {
+  if (!file) return null;
+  const imageUrl = URL.createObjectURL(file);
+  return (
+    <img
+      src={imageUrl}
+      alt="Uploaded Image"
+      style={{ width: "30vw", height: "30vw", objectFit: "cover" }}
+    />
+  );
+}
 
 export default function Home() {
   const [openModal, setOpenModal] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [file, setFile] = useState(null);
+  const fileInput = useRef(null);
+
+  const ImageInput = ({ setFile }) => {
+    const onChange = async (e) => {
+      if (e.target.files && e.target.files.length > 0) {
+        setFile(e.target.files[0]);
+      }
+    };
+    return <input type="file" name="image" onChange={onChange} />;
+  };
+
   return (
     <div
       className="flex flex-col min-h-screen min-w-screen"
@@ -26,39 +65,57 @@ export default function Home() {
           style={{ width: "40%", height: "auto" }}
         />
 
-        {/*   Button to Upload Image  */}
-        <button
+        {/* Button to Upload Image */}
+        <Button
           onClick={() => setOpenModal(true)}
-          className="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-teal-300 to-lime-300 group-hover:from-teal-300 group-hover:to-lime-300 dark:text-white dark:hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-lime-200 dark:focus:ring-lime-800"
+          outline
+          gradientDuoTone="tealToLime"
         >
-          <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
-            UPLOAD IMAGE
-          </span>
-        </button>
+          UPLOAD IMAGE
+        </Button>
         <Modal show={openModal} onClose={() => setOpenModal(false)}>
-          <Modal.Header>Terms of Service</Modal.Header>
+          <Modal.Header>Upload Image</Modal.Header>
           <Modal.Body>
-            <div className="space-y-6">
-              <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                With less than a month to go before the European Union enacts
-                new consumer privacy laws for its citizens, companies around the
-                world are updating their terms of service agreements to comply.
-              </p>
-              <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                The European Union’s General Data Protection Regulation
-                (G.D.P.R.) goes into effect on May 25 and is meant to ensure a
-                common set of data rights in the European Union. It requires
-                organizations to notify users as soon as possible of high-risk
-                data breaches that could personally affect them.
-              </p>
+            <div className="space-y-6 flex-grow flex flex-col items-center justify-center">
+              <input
+                type="file"
+                name="image"
+                ref={fileInput}
+                onChange={(e) => {
+                  setFile(e.target.files[0]);
+                  setIsVisible(false);
+                }}
+                style={{ display: "none" }}
+              />
+              <Button
+                className="upload-btn"
+                onClick={() => {
+                  fileInput.current.click();
+                }}
+              >
+                <HiFolder className="mr-2 h-5 w-5" />
+                Choose File
+                <HiOutlineArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+
+              <Button>
+                <HiCamera className="mr-2 h-5 w-5" />
+                Take Photo
+                <HiOutlineArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+
+              {isVisible ? <NoImageAlert /> : <ShowImage file={file} />}
+            </div>
+            <div className="flex flex-col items-end justify-start">
+              <Button
+                color="red"
+                className="items-end"
+                onClick={() => setOpenModal(false)}
+              >
+                Close
+              </Button>
             </div>
           </Modal.Body>
-          <Modal.Footer>
-            <Button onClick={() => setOpenModal(false)}>I accept</Button>
-            <Button color="gray" onClick={() => setOpenModal(false)}>
-              Decline
-            </Button>
-          </Modal.Footer>
         </Modal>
 
         {/* Google Map */}
