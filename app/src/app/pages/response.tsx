@@ -1,8 +1,11 @@
+"use client";
 import Footer from "../footer";
 import { useLocation } from "react-router-dom";
 
-import { Alert } from "flowbite-react";
+import { Alert, Button } from "flowbite-react";
 import React from "react";
+import { useNavigate } from "react-router-dom";
+
 import {
   HiExclamation,
   HiExclamationCircle,
@@ -10,18 +13,40 @@ import {
 } from "react-icons/hi";
 import { GiTripleClaws, GiDeadWood } from "react-icons/gi";
 
-function CalcEndangeredLevel() {
+function CalcEndangeredLevel(result) {
+  if (
+    result["details"]["conservation_status"]
+      .toLowerCase()
+      .search("endangered") != -1 ||
+    result["details"]["conservation_status"]
+      .toLowerCase()
+      .search("vulnerable") != -1
+  )
+    return (
+      <div className="flex flex-col">
+        <Alert color="warning" icon={HiExclamationCircle}>
+          <span className="text-2xl">
+            {result["details"]["conservation_status"]}
+          </span>
+        </Alert>
+        <p className="text-red-500">
+          Please contact your local authorities if spotted!
+        </p>
+      </div>
+    );
   return (
     <Alert color="warning" icon={HiExclamationCircle}>
-      <span className="text-3xl">Medium</span>
+      <span className="text-2xl">
+        {result["details"]["conservation_status"]}
+      </span>
     </Alert>
   );
 }
 
-function CalcThreatLevel() {
+function CalcThreatLevel(result) {
   return (
     <Alert color="failure" icon={HiExclamation}>
-      <span className="text-3xl">High</span>
+      <span className="text-2xl">{result["details"]["aggressiveness"]}</span>
     </Alert>
   );
 }
@@ -29,6 +54,7 @@ function CalcThreatLevel() {
 export default function ResponsePage() {
   const { state: { image, result } = {} } = useLocation();
   const imageUrl = URL.createObjectURL(image);
+  const navigate = useNavigate();
 
   return (
     <div
@@ -64,17 +90,19 @@ export default function ResponsePage() {
               className="h-full w-full rounded-md flex flex-col justify-around p-4"
               style={{ backgroundColor: "#ffffff" }}
             >
-              <h1 className="text-4xl mb-9">This is a... Your mom!</h1>
+              <h1 className="text-4xl mb-9">
+                This is a... <b>{result["animal"]}</b>!
+              </h1>
               <div className="flex flex-row mb-1">
                 <h1 className="text-3xl">Threat Level </h1>
                 <GiTripleClaws className=" ml-5 text-3xl" />
               </div>
-              {CalcThreatLevel()}
+              {CalcThreatLevel(result)}
               <div className="flex flex-row mb-1 mt-2">
                 <h1 className="text-3xl">Endangered Level </h1>
                 <GiDeadWood className=" ml-5 text-3xl" />
               </div>
-              {CalcEndangeredLevel()}
+              {CalcEndangeredLevel(result)}
             </div>
           </div>
         </div>
@@ -84,9 +112,31 @@ export default function ResponsePage() {
           className="h-full w-full rounded-md flex flex-col justify-around p-4"
           style={{ backgroundColor: "#ffffff" }}
         >
-          Oop {JSON.stringify(result)}
+          <h1 className="text-4xl mb-5">More Information!</h1>
+          <h2 className="text-2xl mb-2">Scientific Name</h2>
+          <p>{result["details"]["scientific_name"]}</p>
+          <h2 className="text-2xl my-2">Visual Appearance</h2>
+          <p>{result["details"]["visual_appearance"]}</p>
+          <h2 className="text-2xl my-2">Species Range</h2>
+          <p>{result["details"]["species_range"]}</p>
+          <h2 className="text-2xl my-2">Diet</h2>
+          <p>{result["details"]["diet"]}</p>
+          <h2 className="text-2xl my-2">Diurnality</h2>
+          <p>{result["details"]["diurnality"]}</p>
         </div>
       </div>
+      <div className="flex flex-row justify-center m-10">
+        <Button
+          onClick={() => {
+            navigate("/");
+          }}
+          outline
+          gradientDuoTone="tealToLime"
+        >
+          Return to Home
+        </Button>
+      </div>
+
       <Footer />
     </div>
   );

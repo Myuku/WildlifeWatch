@@ -1,19 +1,28 @@
 "use client"; // Ensure this is a client-side component
 
-import React, { useEffect, useState } from 'react';
-import dynamic from 'next/dynamic';
-import { Modal } from 'flowbite-react'; // Assuming you're using Flowbite React for modals
+import React, { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
+import { Modal } from "flowbite-react"; // Assuming you're using Flowbite React for modals
 
 // Dynamically import Google Maps components
-const LoadScript = dynamic(() => import('@react-google-maps/api').then(mod => mod.LoadScript), { ssr: false });
-const GoogleMap = dynamic(() => import('@react-google-maps/api').then(mod => mod.GoogleMap), { ssr: false });
-const Marker = dynamic(() => import('@react-google-maps/api').then(mod => mod.Marker), { ssr: false });
+const LoadScript = dynamic(
+  () => import("@react-google-maps/api").then((mod) => mod.LoadScript),
+  { ssr: false }
+);
+const GoogleMap = dynamic(
+  () => import("@react-google-maps/api").then((mod) => mod.GoogleMap),
+  { ssr: false }
+);
+const Marker = dynamic(
+  () => import("@react-google-maps/api").then((mod) => mod.Marker),
+  { ssr: false }
+);
 
 const mapContainerStyle = {
-  width: '81vw', // Adjust the width of the map container
-  height: '85vh', // Adjust the height of the map container
-  borderRadius: '10px',
-  marginBottom: '20px',
+  width: "81vw", // Adjust the width of the map container
+  height: "85vh", // Adjust the height of the map container
+  borderRadius: "10px",
+  marginBottom: "20px",
 };
 
 // Define props type for passing location change handler
@@ -23,8 +32,8 @@ interface MapComponentProps {
 
 export default function MapComponent({ onLocationChange }: MapComponentProps) {
   const [location, setLocation] = useState({ lat: 0, lng: 0 });
-  const [address, setAddress] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [address, setAddress] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newLocation, setNewLocation] = useState({ lat: 0, lng: 0 });
 
@@ -39,12 +48,12 @@ export default function MapComponent({ onLocationChange }: MapComponentProps) {
           onLocationChange(latitude, longitude); // Update parent component with the new location
         },
         (error) => {
-          setErrorMessage('Unable to retrieve your location');
+          setErrorMessage("Unable to retrieve your location");
           console.error(error);
         }
       );
     } else {
-      setErrorMessage('Geolocation is not supported by this browser');
+      setErrorMessage("Geolocation is not supported by this browser");
     }
   };
 
@@ -54,12 +63,12 @@ export default function MapComponent({ onLocationChange }: MapComponentProps) {
     const latlng = { lat, lng };
 
     geocoder.geocode({ location: latlng }, (results, status) => {
-      if (status === 'OK' && results && results[0]) {
+      if (status === "OK" && results && results[0]) {
         setAddress(results[0].formatted_address); // Set the formatted address
-      } else if (status === 'OK' && !results) {
-        setErrorMessage('No results found');
+      } else if (status === "OK" && !results) {
+        setErrorMessage("No results found");
       } else {
-        setErrorMessage('Geocoder failed due to: ' + status);
+        setErrorMessage("Geocoder failed due to: " + status);
       }
     });
   };
@@ -119,7 +128,7 @@ export default function MapComponent({ onLocationChange }: MapComponentProps) {
             <Modal.Header>Confirm Location Change</Modal.Header>
             <Modal.Body>
               <p>
-                Do you want to move to the selected location with coordinates: 
+                Do you want to move to the selected location with coordinates:
                 {` Latitude: ${newLocation.lat}, Longitude: ${newLocation.lng}?`}
               </p>
             </Modal.Body>

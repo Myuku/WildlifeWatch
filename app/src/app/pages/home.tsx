@@ -189,6 +189,11 @@ export default function HomePage() {
                   Continue
                 </Button>
               </div>
+              {isVisible ? null : (
+                <p className="text-red-400">
+                  Please note that it may take a while to load...
+                </p>
+              )}
             </Modal.Footer>
           </Modal.Body>
         </Modal>
