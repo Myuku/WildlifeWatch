@@ -18,7 +18,11 @@ const apiKey = process.env.OPENAI_API_KEY
 // Import multer
 const fs = require('fs')
 const multer = require('multer')
+const cors = require('cors');
 const upload = multer({dest: 'uploads/' });
+
+// Enable CORS for all routes
+app.use(cors());
 
 const pgClient = new Client({
     user: process.env.user,
