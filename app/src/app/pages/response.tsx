@@ -12,6 +12,7 @@ import {
   HiEmojiHappy,
 } from "react-icons/hi";
 import { GiTripleClaws, GiDeadWood } from "react-icons/gi";
+import { relative } from "path";
 
 function CalcEndangeredLevel(result) {
   if (

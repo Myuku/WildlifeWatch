@@ -73,7 +73,7 @@ export default function HomePage() {
 
   const [isVisible, setIsVisible] = useState(true);
   const [file, setFile] = useState<File | null>(null);
-  const [analysisResult, setAnalysisResult] = useState<string | null>(null);
+  const [result, setResult] = useState<JSON | null>(null);
   const fileInput = useRef<HTMLInputElement | null>(null);
 
   // Turns the NIY Toast off after 2 seconds
@@ -93,19 +93,14 @@ export default function HomePage() {
       "location",
       JSON.stringify({ lat: currentLocation.lat, lng: currentLocation.lng })
     );
-    let url = "http://localhost:3000";
+
     try {
-      const response = await fetch(url + "/image-analysis", {
+      const response = await fetch("/image-analysis", {
         method: "POST",
         body: formData,
-      })
-        .then((response) => response.json())
-        .then((json) => {
-          navigate("/response", {
-            state: { image: file, result: json },
-          });
-        });
-      console.log(analysisResult);
+      });
+      setResult(await response.json());
+      console.log(result);
     } catch (error) {
       console.error("Error uploading image:", error);
     }
@@ -184,7 +179,12 @@ export default function HomePage() {
                   disabled={isVisible}
                   color="green"
                   className="items-end"
-                  onClick={handleAnalysis}
+                  onClick={() => {
+                    handleAnalysis;
+                    navigate("/response", {
+                      state: { image: file, result: result },
+                    });
+                  }}
                 >
                   Continue
                 </Button>
