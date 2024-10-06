@@ -24,7 +24,7 @@
 }
 
 .footer-right {
-  @apply flex justify-between gap-28; /* Further increased gap between topics */
+  @apply flex justify-between gap-20; /* Further increased gap between topics */
 }
 
 .footer-topic h3 {

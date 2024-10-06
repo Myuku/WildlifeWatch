@@ -45,27 +45,27 @@ export default function Footer() {
         {/* Right side - Topics and page links */}
         <div className="footer-right">
           <div className="footer-topic">
-            <h3>Topic</h3>
+            <h3>About</h3>
             <ul>
-              <li>Page</li>
-              <li>Page</li>
-              <li>Page</li>
+              <li>About Us</li>
+              <li>Contact Us</li>
+              <li></li>
             </ul>
           </div>
           <div className="footer-topic">
-            <h3>Topic</h3>
+            <h3>Support</h3>
             <ul>
-              <li>Page</li>
-              <li>Page</li>
-              <li>Page</li>
+              <li>Report</li>
+              <li>Q&A</li>
+              <li></li>
             </ul>
           </div>
           <div className="footer-topic">
-            <h3>Topic</h3>
+            <h3>Resources</h3>
             <ul>
-              <li>Page</li>
-              <li>Page</li>
-              <li>Page</li>
+              <li>Animal</li>
+              <li></li>
+              <li></li>
             </ul>
           </div>
         </div>
