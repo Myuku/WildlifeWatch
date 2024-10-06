@@ -4,12 +4,12 @@ import { Button, Modal } from "flowbite-react";
 import { useState } from "react";
 
 import Image from "next/image";
-import Footer from './footer';
-import React from 'react';
-
+import Footer from "./footer";
+import React from "react";
+import MapComponent from "./MapComponent";
 
 export default function Home() {
-  const [openModal, setOpenModal] = useState(true);
+  const [openModal, setOpenModal] = useState(false);
   return (
     <div
       className="flex flex-col min-h-screen min-w-screen"
@@ -17,13 +17,13 @@ export default function Home() {
     >
       <main className="flex-grow flex flex-col items-center justify-center">
         {/* Logo */}
-        <Image 
-          src="/logo.jpeg" 
-          alt="Wildlife Watch Logo" 
-          width={0} 
-          height={0} 
-          sizes="100vw" 
-          style={{ width: '40%', height: 'auto' }} 
+        <Image
+          src="/logo.jpeg"
+          alt="Wildlife Watch Logo"
+          width={0}
+          height={0}
+          sizes="100vw"
+          style={{ width: "40%", height: "auto" }}
         />
 
         {/*   Button to Upload Image  */}
