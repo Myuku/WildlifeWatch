@@ -3,9 +3,9 @@ const vision = require('@google-cloud/vision');
 const axios = require('axios');
 const client = new vision.ImageAnnotatorClient();
 
-import OpenAI from "openai";
-import { z } from "zod";
-import { zodResponseFormat } from "openai/helpers/zod";
+const OpenAI = require("openai");
+const { z }  = require("zod");
+const { zodResponseFormat } = require("openai/helpers/zod");
 
 const openai = new OpenAI();
 

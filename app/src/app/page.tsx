@@ -4,8 +4,9 @@ import { Button, Modal } from "flowbite-react";
 import { useState } from "react";
 
 import Image from "next/image";
-import Footer from "./footer";
-import React from "react";
+import Footer from './footer';
+import React from 'react';
+
 
 export default function Home() {
   const [openModal, setOpenModal] = useState(true);
@@ -15,13 +16,14 @@ export default function Home() {
       style={{ backgroundColor: "#FCFBF6" }}
     >
       <main className="flex-grow flex flex-col items-center justify-center">
-        <Image
-          src="/logo.jpeg"
-          alt="Wildlife Watch Logo"
-          width={0}
-          height={0}
-          sizes="100vw"
-          style={{ width: "40%", height: "auto" }}
+        {/* Logo */}
+        <Image 
+          src="/logo.jpeg" 
+          alt="Wildlife Watch Logo" 
+          width={0} 
+          height={0} 
+          sizes="100vw" 
+          style={{ width: '40%', height: 'auto' }} 
         />
 
         {/*   Button to Upload Image  */}
@@ -58,7 +60,14 @@ export default function Home() {
             </Button>
           </Modal.Footer>
         </Modal>
+
+        {/* Google Map */}
+        <div className="w-full h-96 mt-8">
+          <MapComponent />
+        </div>
       </main>
+
+      {/* Footer */}
       <Footer />
     </div>
   );
