@@ -36,6 +36,18 @@ function ShowImage({ file }) {
 
 export default function Home() {
   const [openModal, setOpenModal] = useState(false);
+  const [currentLocation, setCurrentLocation] = useState({ lat: 0, lng: 0 });
+
+  // Handler to update the current location from MapComponent
+  const handleLocationChange = (lat: number, lng: number) => {
+    setCurrentLocation({ lat, lng });
+  };
+
+  // Function to round to 4 decimal places
+  const roundToFour = (num: number) => {
+    return Math.round(num * 10000) / 10000;
+  };
+
   const [isVisible, setIsVisible] = useState(true);
   const [file, setFile] = useState(null);
   const fileInput = useRef(null);
@@ -51,11 +63,11 @@ export default function Home() {
 
   return (
     <div
-      className="flex flex-col min-h-screen min-w-screen"
+      className="flex flex-col min-h-screen"
       style={{ backgroundColor: "#FCFBF6" }}
     >
-      <main className="flex-grow flex flex-col items-center justify-center">
-        {/* Logo */}
+      {/* Header Section */}
+      <header className="flex flex-col items-center py-6">
         <Image
           src="/logo.jpeg"
           alt="Wildlife Watch Logo"
@@ -73,6 +85,13 @@ export default function Home() {
         >
           UPLOAD IMAGE
         </Button>
+        {/* Line with current location */}
+        <p className="text-gray-600 mt-4 text-sm">
+          You are at: Latitude {roundToFour(currentLocation.lat)}, Longitude{" "}
+          {roundToFour(currentLocation.lng)}
+        </p>
+
+        {/* Modal for Uploading Image */}
         <Modal show={openModal} onClose={() => setOpenModal(false)}>
           <Modal.Header>Upload Image</Modal.Header>
           <Modal.Body>
@@ -117,14 +136,17 @@ export default function Home() {
             </div>
           </Modal.Body>
         </Modal>
+      </header>
 
-        {/* Google Map */}
-        <div className="w-full h-96 mt-8">
-          <MapComponent />
+      {/* Main Section - Larger Map */}
+      <main className="flex-grow flex justify-center items-center">
+        {/* Larger map container */}
+        <div className="w-full max-w-6xl p-6">
+          <MapComponent onLocationChange={handleLocationChange} />
         </div>
       </main>
 
-      {/* Footer */}
+      {/* Footer Section */}
       <Footer />
     </div>
   );

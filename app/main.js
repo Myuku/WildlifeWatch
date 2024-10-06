@@ -20,7 +20,7 @@ const AnimalTraitsResponse = z.object({
     diet: z.string(),
     aggressiveness: z.string(),
     diurnality: z.string(),
-    notes: z.string() | z.null()
+    notes: z.string()
 })
 
 // Must: animal
@@ -56,7 +56,7 @@ async function getTraits(animal, location, appearance){
         messages: messages,
         response_format: response_format
     })
-    return completion.choices[0].message.parsed;
+    return JSON.stringify(completion.choices[0].message.parsed);
 }
 
 const apiKey = ''
@@ -161,7 +161,7 @@ const server = http.createServer(async (req, res) => {
 
             if (animalLabel !== 'Error identifying animal label.') {
                 // Ask GPT for more details
-                const animalDetails = await getAnimalDetails(animalLabel);
+                const animalDetails = await getTraits(animalLabel, null, null);
                 res.end(`Animal label identified: ${animalLabel}\n\nInteresting facts or details:\n${animalDetails}\n`);
             } else {
                 res.end(`Animal label could not be identified.\n`);
