@@ -2,7 +2,6 @@
 
 import { Button, Modal } from "flowbite-react";
 import { useState } from "react";
-
 import Image from "next/image";
 import Footer from "./footer";
 import React from "react";
@@ -10,13 +9,11 @@ import MapComponent from "./MapComponent";
 
 export default function Home() {
   const [openModal, setOpenModal] = useState(false);
+
   return (
-    <div
-      className="flex flex-col min-h-screen min-w-screen"
-      style={{ backgroundColor: "#FCFBF6" }}
-    >
-      <main className="flex-grow flex flex-col items-center justify-center">
-        {/* Logo */}
+    <div className="flex flex-col min-h-screen" style={{ backgroundColor: "#FCFBF6" }}>
+      {/* Header Section */}
+      <header className="flex flex-col items-center py-6">
         <Image
           src="/logo.jpeg"
           alt="Wildlife Watch Logo"
@@ -26,15 +23,16 @@ export default function Home() {
           style={{ width: "40%", height: "auto" }}
         />
 
-        {/*   Button to Upload Image  */}
         <button
           onClick={() => setOpenModal(true)}
-          className="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-teal-300 to-lime-300 group-hover:from-teal-300 group-hover:to-lime-300 dark:text-white dark:hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-lime-200 dark:focus:ring-lime-800"
+          className="relative inline-flex items-center justify-center p-0.5 mb-6 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-teal-300 to-lime-300 group-hover:from-teal-300 group-hover:to-lime-300 dark:text-white dark:hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-lime-200 dark:focus:ring-lime-800"
         >
           <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
             UPLOAD IMAGE
           </span>
         </button>
+
+        {/* Modal for Terms of Service */}
         <Modal show={openModal} onClose={() => setOpenModal(false)}>
           <Modal.Header>Terms of Service</Modal.Header>
           <Modal.Body>
@@ -60,14 +58,17 @@ export default function Home() {
             </Button>
           </Modal.Footer>
         </Modal>
+      </header>
 
-        {/* Google Map */}
-        <div className="w-full h-96 mt-8">
+      {/* Main Section - Larger Map */}
+      <main className="flex-grow flex justify-center items-center">
+        {/* Larger map container */}
+        <div className="w-full max-w-6xl p-6">
           <MapComponent />
         </div>
       </main>
 
-      {/* Footer */}
+      {/* Footer Section */}
       <Footer />
     </div>
   );
