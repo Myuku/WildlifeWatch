@@ -1,10 +1,9 @@
-// src/app/MapComponent.tsx
-"use client";  // Mark this as a client-side component
+"use client";  // Ensure this is a client-side component
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 
-// Dynamically import the Google Maps components
+// Dynamically import Google Maps components
 const LoadScript = dynamic(() => import('@react-google-maps/api').then(mod => mod.LoadScript), { ssr: false });
 const GoogleMap = dynamic(() => import('@react-google-maps/api').then(mod => mod.GoogleMap), { ssr: false });
 const Marker = dynamic(() => import('@react-google-maps/api').then(mod => mod.Marker), { ssr: false });
@@ -14,25 +13,48 @@ const mapContainerStyle = {
   height: '400px', // Set height for the map container
 };
 
-const center = {
-  lat: 48.8584,  // Latitude of the Eiffel Tower (example)
-  lng: 2.2945,   // Longitude of the Eiffel Tower (example)
-};
-
 export default function MapComponent() {
-  return (
-<LoadScript
-  id="google-maps-script"  // Add this line
-  googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}
->
-  <GoogleMap
-    mapContainerStyle={mapContainerStyle}
-    center={center}
-    zoom={12}
-  >
-    <Marker position={center} />
-  </GoogleMap>
-</LoadScript>
+  const [location, setLocation] = useState({ lat: 0, lng: 0 });  // Default location (could be set to any default value)
+  const [errorMessage, setErrorMessage] = useState('');
 
+  // Use the Geolocation API to get the user's current location
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+        },
+        (error) => {
+          setErrorMessage('Unable to retrieve your location');
+          console.error(error);
+        }
+      );
+    } else {
+      setErrorMessage('Geolocation is not supported by this browser');
+    }
+  }, []);
+
+  return (
+    <div>
+      {errorMessage ? (
+        <p>{errorMessage}</p>  // Display error message if unable to get location
+      ) : (
+        <LoadScript
+          googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}  // Use Google Maps API key
+          id="google-maps-script"
+        >
+          <GoogleMap
+            mapContainerStyle={mapContainerStyle}
+            center={location}  // Use the user's current location to center the map
+            zoom={12}
+          >
+            <Marker position={location} />  {/* Mark the user's current location */}
+          </GoogleMap>
+        </LoadScript>
+      )}
+    </div>
   );
 }
