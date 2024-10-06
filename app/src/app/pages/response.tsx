@@ -1,15 +1,14 @@
 import Footer from "../footer";
 import { useLocation } from "react-router-dom";
 
-import { Card, Modal, Alert, Toast } from "flowbite-react";
-import React, { useState, useRef, useEffect } from "react";
+import { Alert } from "flowbite-react";
+import React from "react";
 import {
   HiExclamation,
   HiExclamationCircle,
   HiEmojiHappy,
 } from "react-icons/hi";
 import { GiTripleClaws, GiDeadWood } from "react-icons/gi";
-import { relative } from "path";
 
 function CalcEndangeredLevel() {
   return (
@@ -85,7 +84,7 @@ export default function ResponsePage() {
           className="h-full w-full rounded-md flex flex-col justify-around p-4"
           style={{ backgroundColor: "#ffffff" }}
         >
-          Oop {result}
+          Oop {JSON.stringify(result)}
         </div>
       </div>
       <Footer />
