@@ -88,7 +88,7 @@ export default function HomePage() {
   const handleAnalysis = async (event) => {
     event.preventDefault();
     const formData = new FormData();
-    formData.append("image", file);
+    formData.append("image", file!);
     formData.append(
       "location",
       JSON.stringify({ lat: currentLocation.lat, lng: currentLocation.lng })
@@ -105,6 +105,18 @@ export default function HomePage() {
       console.error("Error uploading image:", error);
     }
   };
+
+  const handleRetrieve = async(event) => {
+    event.preventDefault()
+    try {
+      const response = await fetch("/image-analysis", {
+        method: "GET"
+      });
+      setAllData(await response.json());
+    } catch (error) {
+      console.error("Error getting data", error);
+    }
+  }
 
   return (
     <div

@@ -8,6 +8,7 @@ import { Modal } from 'flowbite-react'; // Assuming you're using Flowbite React 
 const LoadScript = dynamic(() => import('@react-google-maps/api').then(mod => mod.LoadScript), { ssr: false });
 const GoogleMap = dynamic(() => import('@react-google-maps/api').then(mod => mod.GoogleMap), { ssr: false });
 const Marker = dynamic(() => import('@react-google-maps/api').then(mod => mod.Marker), { ssr: false });
+const InfoWindow = dynamic(() => import('@react-google-maps/api').then(mod => mod.InfoWindow), { ssr: false });
 
 const mapContainerStyle = {
   width: '81vw', // Adjust the width of the map container
@@ -27,69 +28,123 @@ export default function MapComponent({ onLocationChange }: MapComponentProps) {
   const [errorMessage, setErrorMessage] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newLocation, setNewLocation] = useState({ lat: 0, lng: 0 });
+  const [allData, setAllData] = useState<JSON | null>(null);
+  const [locationData, setLocationData] = useState<null | Array<{ id: string; lat: number; lng: number; animal_name: string }>>(null);
+  const [selectedMarker, setSelectedMarker] = useState<null | { lat: number; lng: number; animal_name: string; address: string }>(null);
 
-  // Function to get the user's current location when the button is clicked
+  const handleRetrieve = async (event: React.MouseEvent) => {
+    event.preventDefault();
+    try {
+      const response = await fetch("http://localhost:5432/image-analysis", {
+        method: "GET",
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setAllData(data);
+        });
+    } catch (error) {
+      console.error("Error getting data", error);
+    }
+  };
+
+// New function to retrieve and display only id, longitude, latitude, and animal name
+const handleRetrieveLocationData = async (event: React.MouseEvent) => {
+  event.preventDefault();
+  try {
+    const response = await fetch("http://localhost:5432/image-analysis", {
+      method: "GET",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Parse the 'location' string and extract lat/lng
+        const extractedData = data.map((item: any) => {
+          const location = JSON.parse(item.location); // Parse the location string
+          return {
+            id: item.id,
+            lat: location.lat, // Extract the lat
+            lng: location.lng, // Extract the lng
+            animal_name: item.animal_type, // Animal name
+          };
+        });
+        setLocationData(extractedData);
+      });
+  } catch (error) {
+    console.error("Error getting location data", error);
+  }
+};
+
   const handleGetCurrentLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
           setLocation({ lat: latitude, lng: longitude });
-          getGeocodedAddress(latitude, longitude); // Call the function to get the address
-          onLocationChange(latitude, longitude); // Update parent component with the new location
+          getGeocodedAddress(latitude, longitude);
+          onLocationChange(latitude, longitude);
         },
         (error) => {
-          setErrorMessage('Unable to retrieve your location');
+          setErrorMessage("Unable to retrieve your location");
           console.error(error);
         }
       );
     } else {
-      setErrorMessage('Geolocation is not supported by this browser');
+      setErrorMessage("Geolocation is not supported by this browser");
     }
   };
 
-  // Function to get the actual address based on latitude and longitude
   const getGeocodedAddress = (lat: number, lng: number) => {
     const geocoder = new window.google.maps.Geocoder();
     const latlng = { lat, lng };
 
     geocoder.geocode({ location: latlng }, (results, status) => {
-      if (status === 'OK' && results && results[0]) {
-        setAddress(results[0].formatted_address); // Set the formatted address
-      } else if (status === 'OK' && !results) {
-        setErrorMessage('No results found');
+      if (status === "OK" && results && results[0]) {
+        setAddress(results[0].formatted_address);
+      } else if (status === "OK" && !results) {
+        setErrorMessage("No results found");
       } else {
-        setErrorMessage('Geocoder failed due to: ' + status);
+        setErrorMessage("Geocoder failed due to: " + status);
       }
     });
   };
 
-  // Handle click on the map to get the clicked location
+  const handleMarkerClick = (marker: { lat: number; lng: number; animal_name: string }) => {
+    const geocoder = new window.google.maps.Geocoder();
+    const latlng = { lat: marker.lat, lng: marker.lng };
+
+    // Fetch the address for the marker
+    geocoder.geocode({ location: latlng }, (results, status) => {
+      if (status === "OK" && results && results[0]) {
+        const address = results[0].formatted_address;
+        setSelectedMarker({ ...marker, address });
+      } else {
+        setErrorMessage("Geocoder failed due to: " + status);
+      }
+    });
+  };
+
   const handleMapClick = (event: google.maps.MapMouseEvent) => {
-    const lat = event.latLng?.lat(); // Get the latitude of the clicked point
-    const lng = event.latLng?.lng(); // Get the longitude of the clicked point
+    const lat = event.latLng?.lat();
+    const lng = event.latLng?.lng();
 
     if (lat && lng) {
-      setNewLocation({ lat, lng }); // Store the new location in state
-      setIsModalOpen(true); // Open the confirmation modal
+      setNewLocation({ lat, lng });
+      setIsModalOpen(true);
     }
   };
 
-  // Confirm moving to the new location
   const confirmLocationChange = () => {
-    setLocation(newLocation); // Set the new location
-    getGeocodedAddress(newLocation.lat, newLocation.lng); // Get the address of the new location
-    setIsModalOpen(false); // Close the modal
-    onLocationChange(newLocation.lat, newLocation.lng); // Update parent component with the new location
+    setLocation(newLocation);
+    getGeocodedAddress(newLocation.lat, newLocation.lng);
+    setIsModalOpen(false);
+    onLocationChange(newLocation.lat, newLocation.lng);
   };
 
-  // Cancel the location change
   const cancelLocationChange = () => {
-    setIsModalOpen(false); // Close the modal without changing the location
+    setIsModalOpen(false);
   };
 
   useEffect(() => {
-    handleGetCurrentLocation(); // Automatically get the user's current location when the component loads
+    handleGetCurrentLocation();
   }, []);
 
   return (
@@ -98,55 +153,70 @@ export default function MapComponent({ onLocationChange }: MapComponentProps) {
         <p>{errorMessage}</p>
       ) : (
         <>
-          <LoadScript
-            id="google-maps-load-script"
-            googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!} // Ensure the API key is set properly
-          >
+          <LoadScript id="google-maps-load-script" googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>
             <div style={mapContainerStyle}>
               <GoogleMap
                 mapContainerStyle={mapContainerStyle}
                 center={location}
                 zoom={12}
-                onClick={handleMapClick} // Handle click event on the map
+                onClick={handleMapClick}
               >
+                {/* Marker for the user's current location */}
                 <Marker position={location} />
+
+                {/* Display green markers for each lat/lng from locationData */}
+                {locationData &&
+                  locationData.map((marker) => (
+                    <Marker
+                      key={marker.id}
+                      position={{ lat: marker.lat, lng: marker.lng }}
+                      icon={{
+                        url: "http://maps.google.com/mapfiles/ms/icons/green-dot.png", // Green marker icon
+                      }}
+                      onClick={() => handleMarkerClick(marker)} // Handle click event for each marker
+                    />
+                  ))}
+
+                {/* InfoWindow to display animal name and address */}
+                {selectedMarker && (
+                  <InfoWindow
+                    position={{ lat: selectedMarker.lat, lng: selectedMarker.lng }}
+                    onCloseClick={() => setSelectedMarker(null)} // Close the InfoWindow
+                  >
+                    <div>
+                      <h3>{selectedMarker.animal_name}</h3>
+                      <p>{selectedMarker.address}</p>
+                    </div>
+                  </InfoWindow>
+                )}
               </GoogleMap>
             </div>
           </LoadScript>
 
-          {/* Modal for confirming location change */}
           <Modal show={isModalOpen} onClose={cancelLocationChange}>
             <Modal.Header>Confirm Location Change</Modal.Header>
             <Modal.Body>
               <p>
-                Do you want to move to the selected location with coordinates: 
+                Do you want to move to the selected location with coordinates:
                 {` Latitude: ${newLocation.lat}, Longitude: ${newLocation.lng}?`}
               </p>
             </Modal.Body>
             <Modal.Footer>
-              <button
-                onClick={confirmLocationChange}
-                className="px-4 py-2 bg-green-500 text-white rounded-md"
-              >
+              <button onClick={confirmLocationChange} className="px-4 py-2 bg-green-500 text-white rounded-md">
                 Yes, Move Here
               </button>
-              <button
-                onClick={cancelLocationChange}
-                className="px-4 py-2 bg-gray-500 text-white rounded-md"
-              >
+              <button onClick={cancelLocationChange} className="px-4 py-2 bg-gray-500 text-white rounded-md">
                 Cancel
               </button>
             </Modal.Footer>
           </Modal>
 
-          {/* Display the address */}
           {address && (
             <p className="mt-8 text-lg font-semibold text-gray-700">
               Current Location: {address}
             </p>
           )}
 
-          {/* Button to get the user's current location */}
           <button
             onClick={handleGetCurrentLocation}
             className="relative inline-flex items-center justify-center p-0.5 mb-6 mt-8 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-teal-300 to-lime-300 group-hover:from-teal-300 group-hover:to-lime-300 dark:text-white dark:hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-lime-200 dark:focus:ring-lime-800"
@@ -155,6 +225,43 @@ export default function MapComponent({ onLocationChange }: MapComponentProps) {
               Get Location
             </span>
           </button>
+
+          <button
+            onClick={handleRetrieve}
+            className="relative inline-flex items-center justify-center p-0.5 mb-6 mt-4 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-blue-300 to-purple-300 group-hover:from-blue-300 group-hover:to-purple-300 dark:text-white dark:hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-purple-200 dark:focus:ring-purple-800"
+          >
+            <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
+              Retrieve Sightings Data
+            </span>
+          </button>
+
+          {/* New button to retrieve and display only id, lat, lng */}
+          <button
+            onClick={handleRetrieveLocationData}
+            className="relative inline-flex items-center justify-center p-0.5 mb-6 mt-4 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-pink-300 to-orange-300 group-hover:from-pink-300 group-hover:to-orange-300 dark:text-white dark:hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-orange-200 dark:focus:ring-orange-800"
+          >
+            <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
+              Retrieve Location Data
+            </span>
+          </button>
+
+          {locationData && (
+            <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md">
+              <h3 className="text-xl font-bold mb-4">Location Data (ID, Latitude, Longitude, Animal Name)</h3>
+              <pre className="whitespace-pre-wrap text-sm text-gray-700">
+                {JSON.stringify(locationData, null, 2)}
+              </pre>
+            </div>
+          )}
+
+          {allData && (
+            <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md">
+              <h3 className="text-xl font-bold mb-4">Retrieved Sightings Data</h3>
+              <pre className="whitespace-pre-wrap text-sm text-gray-700">
+                {JSON.stringify(allData, null, 2)}
+              </pre>
+            </div>
+          )}
         </>
       )}
     </div>
